@@ -24,6 +24,7 @@ const ListKey = () => {
     },
   ]);
 
+  // Check box Items function
   const handleCheck = (id) => {
     // console.log(`key:${id}`);
     const listItems = items.map((item) =>
@@ -33,30 +34,49 @@ const ListKey = () => {
     localStorage.setItem("shoppinglist", JSON.stringify(listItems));
   };
 
+  // Delete Ckeckbox Items
+
+  const handleDelete = (id) => {
+    // console.log(id);
+    const listItems = items.filter((item) => item.id !== id);
+    setItems(listItems);
+    localStorage.setItem("shoppinglist", JSON.stringify(listItems));
+  };
+
   return (
     <main>
-      <ul>
-        {items.map((item) => (
-          // add key values
-          <li className="item" key={item.id}>
-            <input
-              type="checkbox"
-              onChange={() => handleCheck(item.id)}
-              checked={item.checked}
-            />
-            <label
-              // check box is true, label text is cut
-              style={item.checked ? { textDecoration: "line-through" } : null}
-              onDoubleClick={() => handleCheck(item.id)}
-            >
-              {item.item}
-            </label>
+      {/* All are delete empty message create with this length code */}
+      {items.length ? (
+        <ul>
+          {items.map((item) => (
+            // add key values
+            <li className="item" key={item.id}>
+              <input
+                type="checkbox"
+                onChange={() => handleCheck(item.id)}
+                checked={item.checked}
+              />
+              <label
+                // check box is true, label text is cut
+                style={item.checked ? { textDecoration: "line-through" } : null}
+                onDoubleClick={() => handleCheck(item.id)}
+              >
+                {item.item}
+              </label>
 
-            {/* Delete React Icon */}
-            <FaTrashAlt role="button" tabIndex="0" />
-          </li>
-        ))}
-      </ul>
+              {/* Delete React Icon */}
+              <FaTrashAlt
+                // Delete items icon function
+                onClick={() => handleDelete(item.id)}
+                role="button"
+                tabIndex="0"
+              />
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p style={{ marginTop: "2rem" }}>Your List Is Empty</p>
+      )}
     </main>
   );
 };
