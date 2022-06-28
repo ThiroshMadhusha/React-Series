@@ -32,7 +32,6 @@ const Content = () => {
     console.log(count);
   };
 
-
   return (
     <main>
       <p onDoubleClick={handleClick}>Hello {name}!!</p>
