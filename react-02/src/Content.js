@@ -7,6 +7,7 @@ const Content = () => {
     console.log("You Clicked it");
   };
 
+  // anonimous button
   const handleClick2 = (name) => {
     console.log(`${name} was clicked.`);
   };
