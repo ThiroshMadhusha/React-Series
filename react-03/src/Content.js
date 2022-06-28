@@ -23,7 +23,7 @@ const Content = () => {
   // Click Events() Functions
   const handleClick = () => {
     setCount(count + 1);
-    setCount(count + 1);
+    
     console.log(count);
   };
 
