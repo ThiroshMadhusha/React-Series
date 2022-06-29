@@ -3,6 +3,7 @@ import Header from "./pages/Header";
 import ListKey from "./pages/ListKey";
 import { useState } from "react";
 import AddItem from "./pages/AddItem";
+import SearchItem from "./pages/SearchItem";
 
 function App() {
   const [items, setItems] = useState(
@@ -14,11 +15,16 @@ function App() {
   // New Add Items
   const [newItem, setNewItem] = useState("");
 
+  // Search Bar
+  const [search, setSearch] = useState("");
+
+  // Save New Items
   const setAndSaveItems = (newItems) => {
     setItems(newItems);
     localStorage.setItem("shoppinglist", JSON.stringify(newItems));
   };
 
+  // Add New Items
   const addItem = (item) => {
     const id = items.length ? items[items.length - 1].id + 1 : 1;
     const myNewItem = { id, checked: false, item };
@@ -62,13 +68,16 @@ function App() {
   return (
     <div className="App">
       <Header />
+
       <AddItem
         newItem={newItem}
         setNewItem={setNewItem}
         handleSubmit={handleSubmit}
       />
+      <SearchItem search={search} setSearch={setSearch} />
+
       <ListKey
-        items={items}
+        items={items.filter(item=>((item.item).toLowerCase()).includes(search.toLowerCase()))}
         handleCheck={handleCheck}
         handleDelete={handleDelete}
       />
