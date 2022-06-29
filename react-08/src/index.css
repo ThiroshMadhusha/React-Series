@@ -1,0 +1,65 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 22px;
+}
+
+body {
+  min-height: 100vh;
+  font-family: "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans",
+    "Droid Sans", "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.App {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.square {
+  width: 400px;
+  height: 400px;
+  border: 2px solid #000;
+  border-radius: 1rem;
+  box-shadow: 2px 2px 5px #000;
+  display: grid;
+  place-content: center;
+}
+
+form {
+  width: 400px;
+}
+.square p {
+  text-align: center;
+}
+label {
+  position: absolute;
+  left: -99999px;
+}
+input[type="text"] {
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  width: 100%;
+  font-size: 1rem;
+  box-shadow: 2px 2px 5px #000;
+  border-radius: 0.5rem;
+  outline: none;
+}
+
+button {
+  width: 100%;
+  min-height: 48px;
+  margin-top: 1rem;
+  font-size: 1rem;
+  border-radius: 2rem;
+  box-shadow: 2px 2px 5px #000;
+  padding: 1rem;
+}
