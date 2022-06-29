@@ -1,7 +1,6 @@
 import React from "react";
-import "./list.css";
-
 import { FaTrashAlt } from "react-icons/fa";
+import '../assets/listItem.css'
 
 const ListKey = ({ items, handleCheck, handleDelete }) => {
   return (
