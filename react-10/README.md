@@ -1,3 +1,9 @@
+# Start Json Server
+
+Type in terminal : npx json-server -p 3500 -w data/db.json
+
+URL : http://localhost:3500/items
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
