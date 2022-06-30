@@ -4,7 +4,7 @@ import '../assets/listItem.css'
 
 const ListKey = ({ items, handleCheck, handleDelete }) => {
   return (
-    <main>
+    <>
       {/* All are delete empty message create with this length code */}
       {items.length ? (
         <ul>
@@ -37,7 +37,7 @@ const ListKey = ({ items, handleCheck, handleDelete }) => {
       ) : (
         <p style={{ marginTop: "2rem" }}>Your List Is Empty</p>
       )}
-    </main>
+    </>
   );
 };
 

@@ -6,25 +6,46 @@ import AddItem from "./pages/AddItem";
 import SearchItem from "./pages/SearchItem";
 
 function App() {
-  const [items, setItems] = useState(JSON.parse(localStorage.getItem("shoppinglist")) || []);
+  const API_URL = " http://localhost:3500/items";
+
+  const [items, setItems] = useState(
+    JSON.parse(localStorage.getItem("shoppinglist")) || []
+  );
   // --------------------Add Form---------------------
   // New Add Items
   const [newItem, setNewItem] = useState("");
   // Search Bar
   const [search, setSearch] = useState("");
+
+  // fetchError
+  const [fetchError, setFetchError] = useState(null);
+
+  const [isLoading, setIsLoading] = useState(true);
+
   // Add useEffect
   useEffect(() => {
-     localStorage.setItem("shoppinglist", JSON.stringify(items));
-    
-  }, [items]);
+    const fetchItems = async () => {
+      try {
+        const response = await fetch(API_URL);
+        if (!response.ok) throw Error("Did Not Recieved Data");
+        const listItems = await response.json();
+        // console.log(listItems);
+        setItems(listItems);
+        setFetchError(null);
+      } catch (error) {
+        // console.log(error.message);
+        setFetchError(error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    setTimeout(() => {
+      (async () => await fetchItems())();
+    }, 2000);
+  }, []);
 
   console.log("after useEffect");
-
-  // Save New Items
-  // const setAndSaveItems = (newItems) => {
-  //   setItems(newItems);
-   
-  // };
 
   // Add New Items
   const addItem = (item) => {
@@ -78,13 +99,26 @@ function App() {
       />
       <SearchItem search={search} setSearch={setSearch} />
 
-      <ListKey
-        items={items.filter((item) =>
-          item.item.toLowerCase().includes(search.toLowerCase())
+      <main>
+        {isLoading && <p>Loading Items...</p>}
+        {fetchError && (
+          <p
+            style={{
+              color: "red",
+            }}
+          >{`Error :${fetchError}`}</p>
         )}
-        handleCheck={handleCheck}
-        handleDelete={handleDelete}
-      />
+        {!fetchError && !isLoading && (
+          <ListKey
+            items={items.filter((item) =>
+              item.item.toLowerCase().includes(search.toLowerCase())
+            )}
+            handleCheck={handleCheck}
+            handleDelete={handleDelete}
+          />
+        )}
+      </main>
+
       <Footer length={items.length} />
     </div>
   );
