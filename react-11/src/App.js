@@ -5,6 +5,8 @@ import { useState, useEffect } from "react";
 import AddItem from "./pages/AddItem";
 import SearchItem from "./pages/SearchItem";
 
+import apiRequest from "./pages/apiRequest";
+
 function App() {
   const API_URL = " http://localhost:3500/items";
 
@@ -24,9 +26,7 @@ function App() {
 
   // Add useEffect
 
-
   useEffect(() => {
-
     // READ CRUD Opeeration
     const fetchItems = async () => {
       try {
@@ -47,33 +47,56 @@ function App() {
     }, 2000);
   }, []);
 
-  console.log("after useEffect");
-
   // Add New Items
-  const addItem = (item) => {
+  const addItem = async (item) => {
     const id = items.length ? items[items.length - 1].id + 1 : 1;
     const myNewItem = { id, checked: false, item };
     const listItems = [...items, myNewItem];
     setItems(listItems);
-  };
 
-  // --------------------End Add Form
+    // API Create CRUD Operation
+    const postOptions = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(myNewItem),
+    };
+    const result = await apiRequest(API_URL, postOptions);
+    if (result) setFetchError(result);
+  };
+  // --------------------End Add Form-----------------------------
 
   // Check box Items function
-  const handleCheck = (id) => {
-    // console.log(`key:${id}`);
+  const handleCheck = async (id) => {
     const listItems = items.map((item) =>
       item.id === id ? { ...item, checked: !item.checked } : item
     );
     setItems(listItems);
+
+    // API Update CRUD Operation
+    const myItem = listItems.filter((item) => item.id === id);
+    const updateOptions = {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ checked: myItem[0].checked }),
+    };
+    const reqUrl = `${API_URL}/${id}`;
+    const result = await apiRequest(reqUrl, updateOptions);
+    if (result) setFetchError(result);
   };
-
   // Delete Ckeckbox Items
-
-  const handleDelete = (id) => {
-    // console.log(id);
+  const handleDelete = async (id) => {
     const listItems = items.filter((item) => item.id !== id);
     setItems(listItems);
+
+    // API Delete CRUD Operation
+    const deleteOptions = { method: "DELETE" };
+    const reqUrl = `${API_URL}/${id}`;
+    const result = await apiRequest(reqUrl, deleteOptions);
+    if (result) setFetchError(result);
   };
 
   // Handdle Submit function
@@ -86,8 +109,6 @@ function App() {
     // addItem
     addItem(newItem);
     setNewItem("");
-
-    // console.log("submitted");
   };
 
   return (
