@@ -23,17 +23,19 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
 
   // Add useEffect
+
+
   useEffect(() => {
+
+    // READ CRUD Opeeration
     const fetchItems = async () => {
       try {
         const response = await fetch(API_URL);
         if (!response.ok) throw Error("Did Not Recieved Data");
         const listItems = await response.json();
-        // console.log(listItems);
         setItems(listItems);
         setFetchError(null);
       } catch (error) {
-        // console.log(error.message);
         setFetchError(error.message);
       } finally {
         setIsLoading(false);
