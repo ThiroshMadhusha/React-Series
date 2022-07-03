@@ -20,7 +20,8 @@ const Nav = ({ search, setSearch }) => {
           <Link to="/">Home</Link>
         </li>
         <li>
-          <Link to="/post">Post</Link>
+          <Link to="/post">New
+            Post</Link>
         </li>
         <li>
           <Link to="/about">About</Link>
