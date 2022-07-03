@@ -1,148 +1,107 @@
-import Footer from "./pages/Footer";
-import Header from "./pages/Header";
-import ListKey from "./pages/ListKey";
-import { useState, useEffect } from "react";
-import AddItem from "./pages/AddItem";
-import SearchItem from "./pages/SearchItem";
+// Import component in index file.
+// SWITCH statement using for the react router dom in changing separate pages.
+// In This Project, install react router dom 5 using -->> npm install react-router-dom@5.3.0
+// latest react router dom is changing index and app js both files.
+// install date time package in using -- >>  npm i date-fns -S
+// import all the component we create in this project
+import Footer from "./pages/footer/Footer";
+import Header from "./pages/header/Header";
+import Nav from "./pages/navbar/Nav";
+import Home from "./pages/home/Home";
+import Missing from "./pages/missing/Missing";
+import About from "./pages/about/About";
+import NewPost from "./pages/newpost/NewPost";
+import PostPage from "./pages/postpage/PostPage";
 
-import apiRequest from "./pages/apiRequest";
+import { Route, Switch, useHistory } from "react-router-dom";
+import { format } from "date-fns";
+
+import { useState, useEffect } from "react";
 
 function App() {
-  const API_URL = " http://localhost:3500/items";
-
-  const [items, setItems] = useState(
-    JSON.parse(localStorage.getItem("shoppinglist")) || []
-  );
-  // --------------------Add Form---------------------
-  // New Add Items
-  const [newItem, setNewItem] = useState("");
-  // Search Bar
+  const [posts, setPosts] = useState([
+    {
+      id: 1,
+      title: "My First Post",
+      datetime: "July 01, 2021 11:17:36 AM",
+      body: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quis consequatur expedita, assumenda similique non optio! Modi nesciunt excepturi corrupti atque blanditiis quo nobis, non optio quae possimus illum exercitationem ipsa!",
+    },
+    {
+      id: 2,
+      title: "My 2nd Post",
+      datetime: "July 01, 2021 11:17:36 AM",
+      body: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quis consequatur expedita, assumenda similique non optio! Modi nesciunt excepturi corrupti atque blanditiis quo nobis, non optio quae possimus illum exercitationem ipsa!",
+    },
+    {
+      id: 3,
+      title: "My 3rd Post",
+      datetime: "July 01, 2021 11:17:36 AM",
+      body: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quis consequatur expedita, assumenda similique non optio! Modi nesciunt excepturi corrupti atque blanditiis quo nobis, non optio quae possimus illum exercitationem ipsa!",
+    },
+    {
+      id: 4,
+      title: "My Fourth Post",
+      datetime: "July 01, 2021 11:17:36 AM",
+      body: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quis consequatur expedita, assumenda similique non optio! Modi nesciunt excepturi corrupti atque blanditiis quo nobis, non optio quae possimus illum exercitationem ipsa!",
+    },
+  ]);
   const [search, setSearch] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const history = useHistory("");
+  const [postTitle, setPostTitle] = useState("");
+  const [postBody, setPostBody] = useState("");
 
-  // fetchError
-  const [fetchError, setFetchError] = useState(null);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const id = posts.length ? posts[posts.length - 1].id + 1 : 1;
+    const datetime = format(new Date(), "MMMM ddd,yyy pp");
+    const newPost = { id, title: postTitle, datetime, body: postBody };
+    const allPosts = [ ...posts, newPost ];
+    setPosts(allPosts);
+    setPostTitle("");
+    setPostBody("");
+    history.push("/");
+  };
 
-  const [isLoading, setIsLoading] = useState(true);
-
-  // Add useEffect
+  const handleDelete = (id) => {
+    const postList = posts.filter((post) => post.id !== id);
+    setPosts(postList);
+    history.push("/");
+  };
 
   useEffect(() => {
-    // READ CRUD Opeeration
-    const fetchItems = async () => {
-      try {
-        const response = await fetch(API_URL);
-        if (!response.ok) throw Error("Did Not Recieved Data");
-        const listItems = await response.json();
-        setItems(listItems);
-        setFetchError(null);
-      } catch (error) {
-        setFetchError(error.message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    setTimeout(() => {
-      (async () => await fetchItems())();
-    }, 2000);
-  }, []);
-
-  // Add New Items
-  const addItem = async (item) => {
-    const id = items.length ? items[items.length - 1].id + 1 : 1;
-    const myNewItem = { id, checked: false, item };
-    const listItems = [...items, myNewItem];
-    setItems(listItems);
-
-    // API Create CRUD Operation
-    const postOptions = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(myNewItem),
-    };
-    const result = await apiRequest(API_URL, postOptions);
-    if (result) setFetchError(result);
-  };
-  // --------------------End Add Form-----------------------------
-
-  // Check box Items function
-  const handleCheck = async (id) => {
-    const listItems = items.map((item) =>
-      item.id === id ? { ...item, checked: !item.checked } : item
+    const filterResults = posts.filter(
+      (post) =>
+        post.body.toLowerCase().includes(search.toLowerCase()) ||
+        post.title.toLowerCase().includes(search.toLowerCase())
     );
-    setItems(listItems);
-
-    // API Update CRUD Operation
-    const myItem = listItems.filter((item) => item.id === id);
-    const updateOptions = {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ checked: myItem[0].checked }),
-    };
-    const reqUrl = `${API_URL}/${id}`;
-    const result = await apiRequest(reqUrl, updateOptions);
-    if (result) setFetchError(result);
-  };
-  // Delete Ckeckbox Items
-  const handleDelete = async (id) => {
-    const listItems = items.filter((item) => item.id !== id);
-    setItems(listItems);
-
-    // API Delete CRUD Operation
-    const deleteOptions = { method: "DELETE" };
-    const reqUrl = `${API_URL}/${id}`;
-    const result = await apiRequest(reqUrl, deleteOptions);
-    if (result) setFetchError(result);
-  };
-
-  // Handdle Submit function
-  const handleSubmit = (e) => {
-    // stop page reload using preventDefault
-    e.preventDefault();
-    if (!newItem) return;
-    // console.log(newItem);
-
-    // addItem
-    addItem(newItem);
-    setNewItem("");
-  };
+    setSearchResults(filterResults.reverse());
+  }, [posts, search]);
 
   return (
     <div className="App">
-      <Header />
-
-      <AddItem
-        newItem={newItem}
-        setNewItem={setNewItem}
-        handleSubmit={handleSubmit}
-      />
-      <SearchItem search={search} setSearch={setSearch} />
-
-      <main>
-        {isLoading && <p>Loading Items...</p>}
-        {fetchError && (
-          <p
-            style={{
-              color: "red",
-            }}
-          >{`Error :${fetchError}`}</p>
-        )}
-        {!fetchError && !isLoading && (
-          <ListKey
-            items={items.filter((item) =>
-              item.item.toLowerCase().includes(search.toLowerCase())
-            )}
-            handleCheck={handleCheck}
-            handleDelete={handleDelete}
+      <Header title="React JS Blog" />
+      <Nav search={search} setSearch={setSearch} />
+      <Switch>
+        <Route exact path="/">
+          <Home posts={searchResults} />
+        </Route>
+        <Route exact path="/post">
+          <NewPost
+            handleSubmit={handleSubmit}
+            postTitle={postTitle}
+            setPostTitle={setPostTitle}
+            postBody={postBody}
+            setPostBody={setPostBody}
           />
-        )}
-      </main>
-
-      <Footer length={items.length} />
+        </Route>
+        <Route exact path="/post/:id">
+          <PostPage posts={posts} handleDelete={handleDelete} />
+        </Route>
+        <Route path="/about" component={About} />
+        <Route path="*" component={Missing} />
+      </Switch>
+      <Footer />
     </div>
   );
 }
