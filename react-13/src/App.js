@@ -2,7 +2,7 @@
 // SWITCH statement using for the react router dom in changing separate pages.
 // In This Project, install react router dom 5 using -->> npm install react-router-dom@5.3.0
 // latest react router dom is changing index and app js both files.
-
+// install date time package in using -- >>  npm i date-fns -S
 // import all the component we create in this project
 import Footer from "./pages/footer/Footer";
 import Header from "./pages/header/Header";
@@ -14,6 +14,7 @@ import NewPost from "./pages/newpost/NewPost";
 import PostPage from "./pages/postpage/PostPage";
 
 import { Route, Switch, useHistory } from "react-router-dom";
+import { format } from "date-fns";
 
 import { useState, useEffect } from "react";
 
@@ -46,9 +47,36 @@ function App() {
   ]);
   const [search, setSearch] = useState("");
   const [searchResults, setSearchResults] = useState([]);
-  const handleDelete = (id => {
-    
-  })
+  const history = useHistory("");
+  const [postTitle, setPostTitle] = useState("");
+  const [postBody, setPostBody] = useState("");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const id = posts.length ? posts[posts.length - 1].id + 1 : 1;
+    const datetime = format(new Date(), "MMMM ddd,yyy pp");
+    const newPost = { id, title: postTitle, datetime, body: postBody };
+    const allPosts = [ ...posts, newPost ];
+    setPosts(allPosts);
+    setPostTitle("");
+    setPostBody("");
+    history.push("/");
+  };
+
+  const handleDelete = (id) => {
+    const postList = posts.filter((post) => post.id !== id);
+    setPosts(postList);
+    history.push("/");
+  };
+
+  useEffect(() => {
+    const filterResults = posts.filter(
+      (post) =>
+        post.body.toLowerCase().includes(search.toLowerCase()) ||
+        post.title.toLowerCase().includes(search.toLowerCase())
+    );
+    setSearchResults(filterResults.reverse());
+  }, [posts, search]);
 
   return (
     <div className="App">
@@ -56,10 +84,16 @@ function App() {
       <Nav search={search} setSearch={setSearch} />
       <Switch>
         <Route exact path="/">
-          <Home posts={posts} />
+          <Home posts={searchResults} />
         </Route>
         <Route exact path="/post">
-          <NewPost />
+          <NewPost
+            handleSubmit={handleSubmit}
+            postTitle={postTitle}
+            setPostTitle={setPostTitle}
+            postBody={postBody}
+            setPostBody={setPostBody}
+          />
         </Route>
         <Route exact path="/post/:id">
           <PostPage posts={posts} handleDelete={handleDelete} />
