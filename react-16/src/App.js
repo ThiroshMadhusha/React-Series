@@ -1,148 +1,37 @@
-import Footer from "./pages/Footer";
-import Header from "./pages/Header";
-import ListKey from "./pages/ListKey";
-import { useState, useEffect } from "react";
-import AddItem from "./pages/AddItem";
-import SearchItem from "./pages/SearchItem";
-
-import apiRequest from "./pages/apiRequest";
+// Import component in index file.
+// SWITCH statement using for the react router dom in changing separate pages.
+// In This Project, install react router dom 5 using -->> npm install react-router-dom@5.3.0
+// latest react router dom is changing index and app js both files.
+// install date time package in using -- >>  npm i date-fns -S
+// import all the component we create in this project
+import Footer from "./pages/footer/Footer";
+import Header from "./pages/header/Header";
+import Nav from "./pages/navbar/Nav";
+import Home from "./pages/home/Home";
+import Missing from "./pages/missing/Missing";
+import About from "./pages/about/About";
+import NewPost from "./pages/newpost/NewPost";
+import PostPage from "./pages/postpage/PostPage";
+import EditPost from "./pages/edit/EditPost";
+import { Route, Switch } from "react-router-dom";
+import { DataProvider } from "./context/DataContext";
 
 function App() {
-  const API_URL = " http://localhost:3500/items";
-
-  const [items, setItems] = useState(
-    JSON.parse(localStorage.getItem("shoppinglist")) || []
-  );
-  // --------------------Add Form---------------------
-  // New Add Items
-  const [newItem, setNewItem] = useState("");
-  // Search Bar
-  const [search, setSearch] = useState("");
-
-  // fetchError
-  const [fetchError, setFetchError] = useState(null);
-
-  const [isLoading, setIsLoading] = useState(true);
-
-  // Add useEffect
-
-  useEffect(() => {
-    // READ CRUD Opeeration
-    const fetchItems = async () => {
-      try {
-        const response = await fetch(API_URL);
-        if (!response.ok) throw Error("Did Not Recieved Data");
-        const listItems = await response.json();
-        setItems(listItems);
-        setFetchError(null);
-      } catch (error) {
-        setFetchError(error.message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    setTimeout(() => {
-      (async () => await fetchItems())();
-    }, 2000);
-  }, []);
-
-  // Add New Items
-  const addItem = async (item) => {
-    const id = items.length ? items[items.length - 1].id + 1 : 1;
-    const myNewItem = { id, checked: false, item };
-    const listItems = [...items, myNewItem];
-    setItems(listItems);
-
-    // API Create CRUD Operation
-    const postOptions = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(myNewItem),
-    };
-    const result = await apiRequest(API_URL, postOptions);
-    if (result) setFetchError(result);
-  };
-  // --------------------End Add Form-----------------------------
-
-  // Check box Items function
-  const handleCheck = async (id) => {
-    const listItems = items.map((item) =>
-      item.id === id ? { ...item, checked: !item.checked } : item
-    );
-    setItems(listItems);
-
-    // API Update CRUD Operation
-    const myItem = listItems.filter((item) => item.id === id);
-    const updateOptions = {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ checked: myItem[0].checked }),
-    };
-    const reqUrl = `${API_URL}/${id}`;
-    const result = await apiRequest(reqUrl, updateOptions);
-    if (result) setFetchError(result);
-  };
-  // Delete Ckeckbox Items
-  const handleDelete = async (id) => {
-    const listItems = items.filter((item) => item.id !== id);
-    setItems(listItems);
-
-    // API Delete CRUD Operation
-    const deleteOptions = { method: "DELETE" };
-    const reqUrl = `${API_URL}/${id}`;
-    const result = await apiRequest(reqUrl, deleteOptions);
-    if (result) setFetchError(result);
-  };
-
-  // Handdle Submit function
-  const handleSubmit = (e) => {
-    // stop page reload using preventDefault
-    e.preventDefault();
-    if (!newItem) return;
-    // console.log(newItem);
-
-    // addItem
-    addItem(newItem);
-    setNewItem("");
-  };
-
   return (
     <div className="App">
-      <Header />
-
-      <AddItem
-        newItem={newItem}
-        setNewItem={setNewItem}
-        handleSubmit={handleSubmit}
-      />
-      <SearchItem search={search} setSearch={setSearch} />
-
-      <main>
-        {isLoading && <p>Loading Items...</p>}
-        {fetchError && (
-          <p
-            style={{
-              color: "red",
-            }}
-          >{`Error :${fetchError}`}</p>
-        )}
-        {!fetchError && !isLoading && (
-          <ListKey
-            items={items.filter((item) =>
-              item.item.toLowerCase().includes(search.toLowerCase())
-            )}
-            handleCheck={handleCheck}
-            handleDelete={handleDelete}
-          />
-        )}
-      </main>
-
-      <Footer length={items.length} />
+      <Header title="React JS Blog" />
+      <DataProvider>
+        <Nav />
+        <Switch>
+          <Route exact path="/" component={Home} />
+          <Route exact path="/post" component={NewPost} />
+          <Route path="/edit/:id" component={EditPost} />
+          <Route exact path="/post/:id" component={PostPage} />
+          <Route path="/about" component={About} />
+          <Route path="*" component={Missing} />
+        </Switch>
+      </DataProvider>
+      <Footer />
     </div>
   );
 }
