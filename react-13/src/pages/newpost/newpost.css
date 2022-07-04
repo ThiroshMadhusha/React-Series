@@ -1,6 +1,7 @@
 .newPostForm {
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
 
 .newPostForm label {
@@ -10,7 +11,7 @@
 .newPostForm input[type="text"],
 .newPostForm textarea {
   font-family: "Open Sans", sans-serif;
-  width: 100%;
+  width: 70%;
   min-height: 48px;
   font-size: 1rem;
   padding: 0.25rem;
@@ -25,6 +26,7 @@
 
 .newPostForm button {
   margin-top: 1rem;
+  width: 20%;
   height: 48px;
   min-width: 48px;
   border-radius: 10px;
