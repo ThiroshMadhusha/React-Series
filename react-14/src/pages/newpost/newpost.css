@@ -1,0 +1,36 @@
+.newPostForm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.newPostForm label {
+  margin-top: 1rem;
+}
+
+.newPostForm input[type="text"],
+.newPostForm textarea {
+  font-family: "Open Sans", sans-serif;
+  width: 70%;
+  min-height: 48px;
+  font-size: 1rem;
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+  margin-right: 0.25rem;
+  outline: none;
+}
+
+.newPostForm textarea {
+  height: 100px;
+}
+
+.newPostForm button {
+  margin-top: 1rem;
+  width: 20%;
+  height: 48px;
+  min-width: 48px;
+  border-radius: 10px;
+  padding: 0.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+}
