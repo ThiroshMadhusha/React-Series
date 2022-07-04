@@ -1,17 +1,16 @@
-import React from "react";
-import { useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { React, useEffect, useContext, useState } from "react";
+import { Link, useParams, useHistory } from "react-router-dom";
+import DataContext from "../../context/DataContext";
+import { format } from "date-fns";
+import api from "../../api/posts";
 
-const EditPost = ({
-  posts,
-  handleEdit,
-  editBody,
-  setEditBody,
-  setEditTitle,
-  editTitle,
-}) => {
+const EditPost = () => {
+  const [editTitle, setEditTitle] = useState("");
+  const [editBody, setEditBody] = useState("");
+  const { posts, setPosts } = useContext(DataContext);
   const { id } = useParams();
   const post = posts.find((post) => post.id.toString() === id);
+  const history = useHistory();
 
   useEffect(() => {
     if (post) {
@@ -19,6 +18,22 @@ const EditPost = ({
       setEditBody(post.body);
     }
   }, [post, setEditBody, setEditTitle]);
+
+  const handleEdit = async (id) => {
+    const datetime = format(new Date(), "MMMM dd, yyyy pp");
+    const updatePost = { id, title: editTitle, datetime, body: editBody };
+    try {
+      const response = await api.put(`/posts/${id}`, updatePost);
+      setPosts(
+        posts.map((post) => (post.id === id ? { ...response.data } : post))
+      );
+      setEditTitle("");
+      setEditBody("");
+      history.push("/");
+    } catch (error) {
+      console.log(`Error: ${error.message}`);
+    }
+  };
 
   return (
     <main className="NewPost">
@@ -53,7 +68,7 @@ const EditPost = ({
       )}
       {!editTitle && (
         <>
-          <h2>Not D=Found Data</h2>
+          <h2>Not Found Data</h2>
           <p>
             <Link to="/">Go To Main Page</Link>
           </p>
