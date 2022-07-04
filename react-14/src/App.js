@@ -21,6 +21,7 @@ import api from "./api/posts";
 import { useState, useEffect } from "react";
 import useWindowSize from "./hooks/useWindowSize";
 import useAxiosFetch from "./hooks/useAxiosFetch";
+import { DataProvider } from "./context/DataContext";
 
 function App() {
   const [posts, setPosts] = useState([]);
@@ -44,6 +45,16 @@ function App() {
   useEffect(() => {
     setPosts(data);
   }, [data]);
+
+  useEffect(() => {
+    const filterResults = posts.filter(
+      (post) =>
+        post.body.toLowerCase().includes(search.toLowerCase()) ||
+        post.title.toLowerCase().includes(search.toLowerCase())
+    );
+    setSearchResults(filterResults.reverse());
+  }, [posts, search]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const id = posts.length ? posts[posts.length - 1].id + 1 : 1;
@@ -88,15 +99,6 @@ function App() {
     }
   };
 
-  useEffect(() => {
-    const filterResults = posts.filter(
-      (post) =>
-        post.body.toLowerCase().includes(search.toLowerCase()) ||
-        post.title.toLowerCase().includes(search.toLowerCase())
-    );
-    setSearchResults(filterResults.reverse());
-  }, [posts, search]);
-
   // axios use karana nisa me useEffect option eka one wenne ne.
 
   // useEffect(() => {
@@ -124,42 +126,44 @@ function App() {
 
   return (
     <div className="App">
-      <Header title="React JS Blog" width={width} />
-      <Nav search={search} setSearch={setSearch} />
-      <Switch>
-        <Route exact path="/">
-          <Home
-            posts={searchResults}
-            fetchError={fetchError}
-            isLoading={isLoading}
-          />
-        </Route>
-        <Route exact path="/post">
-          <NewPost
-            handleSubmit={handleSubmit}
-            postTitle={postTitle}
-            setPostTitle={setPostTitle}
-            postBody={postBody}
-            setPostBody={setPostBody}
-          />
-        </Route>
-        <Route path="/edit/:id">
-          <EditPost
-            posts={posts}
-            handleEdit={handleEdit}
-            editTitle={editTitle}
-            setEditTitle={setEditTitle}
-            editBody={editBody}
-            setEditBody={setEditBody}
-          />
-        </Route>
-        <Route exact path="/post/:id">
-          <PostPage posts={posts} handleDelete={handleDelete} />
-        </Route>
-        <Route path="/about" component={About} />
-        <Route path="*" component={Missing} />
-      </Switch>
-      <Footer />
+      <DataProvider>
+        <Header title="React JS Blog" />
+        <Nav search={search} setSearch={setSearch} />
+        <Switch>
+          <Route exact path="/">
+            <Home
+              posts={searchResults}
+              fetchError={fetchError}
+              isLoading={isLoading}
+            />
+          </Route>
+          <Route exact path="/post">
+            <NewPost
+              handleSubmit={handleSubmit}
+              postTitle={postTitle}
+              setPostTitle={setPostTitle}
+              postBody={postBody}
+              setPostBody={setPostBody}
+            />
+          </Route>
+          <Route path="/edit/:id">
+            <EditPost
+              posts={posts}
+              handleEdit={handleEdit}
+              editTitle={editTitle}
+              setEditTitle={setEditTitle}
+              editBody={editBody}
+              setEditBody={setEditBody}
+            />
+          </Route>
+          <Route exact path="/post/:id">
+            <PostPage posts={posts} handleDelete={handleDelete} />
+          </Route>
+          <Route path="/about" component={About} />
+          <Route path="*" component={Missing} />
+        </Switch>
+        <Footer />
+      </DataProvider>
     </div>
   );
 }
