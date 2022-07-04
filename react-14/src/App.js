@@ -41,6 +41,9 @@ function App() {
     "http://localhost:3500/posts"
   );
 
+  useEffect(() => {
+    setPosts(data);
+  }, [data]);
   const handleSubmit = async (e) => {
     e.preventDefault();
     const id = posts.length ? posts[posts.length - 1].id + 1 : 1;
@@ -94,7 +97,6 @@ function App() {
     setSearchResults(filterResults.reverse());
   }, [posts, search]);
 
-
   // axios use karana nisa me useEffect option eka one wenne ne.
 
   // useEffect(() => {
@@ -104,9 +106,9 @@ function App() {
 
   //       setPosts(response.data);
   //     } catch (error) {
-  
+
   //       // not in the 200 response range
-  
+
   //       if (error.response) {
   //         console.log(error.response.data);
   //         console.log(error.response.status);
@@ -126,7 +128,11 @@ function App() {
       <Nav search={search} setSearch={setSearch} />
       <Switch>
         <Route exact path="/">
-          <Home posts={searchResults} />
+          <Home
+            posts={searchResults}
+            fetchError={fetchError}
+            isLoading={isLoading}
+          />
         </Route>
         <Route exact path="/post">
           <NewPost
