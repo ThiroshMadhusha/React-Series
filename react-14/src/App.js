@@ -19,7 +19,8 @@ import { format } from "date-fns";
 import api from "./api/posts";
 
 import { useState, useEffect } from "react";
-
+import useWindowSize from "./hooks/useWindowSize";
+import useAxiosFetch from "./hooks/useAxiosFetch";
 
 function App() {
   const [posts, setPosts] = useState([]);
@@ -33,6 +34,12 @@ function App() {
   const [editBody, setEditBody] = useState("");
 
   const history = useHistory("");
+  const { width } = useWindowSize();
+
+  // using useAxiosFetch
+  const { data, fetchError, isLoading } = useAxiosFetch(
+    "http://localhost:3500/posts"
+  );
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -87,30 +94,35 @@ function App() {
     setSearchResults(filterResults.reverse());
   }, [posts, search]);
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const response = await api.get("/posts");
 
-        setPosts(response.data);
-      } catch (error) {
-        // not in the 200 response range
-        if (error.response) {
-          console.log(error.response.data);
-          console.log(error.response.status);
+  // axios use karana nisa me useEffect option eka one wenne ne.
 
-          console.log(error.response.headers);
-        } else {
-          console.log(`Error:${error.message}`);
-        }
-      }
-    };
-    fetchPosts();
-  }, []);
+  // useEffect(() => {
+  //   const fetchPosts = async () => {
+  //     try {
+  //       const response = await api.get("/posts");
+
+  //       setPosts(response.data);
+  //     } catch (error) {
+  
+  //       // not in the 200 response range
+  
+  //       if (error.response) {
+  //         console.log(error.response.data);
+  //         console.log(error.response.status);
+
+  //         console.log(error.response.headers);
+  //       } else {
+  //         console.log(`Error:${error.message}`);
+  //       }
+  //     }
+  //   };
+  //   fetchPosts();
+  // }, []);
 
   return (
     <div className="App">
-      <Header title="React JS Blog" />
+      <Header title="React JS Blog" width={width} />
       <Nav search={search} setSearch={setSearch} />
       <Switch>
         <Route exact path="/">
