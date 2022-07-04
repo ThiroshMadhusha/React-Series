@@ -1,11 +1,8 @@
 import React from "react";
 import "./header.css";
 import { FaLaptop, FaTabletAlt, FaMobileAlt } from "react-icons/fa";
-import { useContext } from "react";
-import DataContext from "../../context/DataContext";
 
-const Header = ({ title }) => {
-  const { width } = useContext(DataContext);
+const Header = ({ title ,width}) => {
   return (
     <header className="Header">
       <h1>{title}</h1>
