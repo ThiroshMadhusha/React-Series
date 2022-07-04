@@ -1,3 +1,9 @@
+# Uninstall Libraries File in Your Dependencies File 
+-->> npm uninstall @testing-library/jest-dom @testing-library/react @testing-library/user-event web-vitals
+
+# Install easy peasy Package Dependency
+-->>  npm install easy-peasy
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
