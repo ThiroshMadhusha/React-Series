@@ -4,6 +4,8 @@
 // latest react router dom is changing index and app js both files.
 // install date time package in using -- >>  npm i date-fns -S
 // import all the component we create in this project
+
+// import all Components
 import Footer from "./pages/footer/Footer";
 import Header from "./pages/header/Header";
 import Nav from "./pages/navbar/Nav";
